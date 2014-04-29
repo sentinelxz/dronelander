@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>LiveGraph version 2.0.beta01. DataSeriesSettings.</comment>
+<entry key="Colour.9">a4ff80</entry>
+<entry key="Colour.8">b3a659</entry>
+<entry key="Colour.7">ff8080</entry>
+<entry key="Colour.6">b30099</entry>
+<entry key="Colour.5">4900ff</entry>
+<entry key="Colour.4">0066b3</entry>
+<entry key="Colour.3">00ff92</entry>
+<entry key="Colour.2">33b300</entry>
+<entry key="Colour.1">ffdb00</entry>
+<entry key="Colour.0">b30000</entry>
+<entry key="DescribedSeriesCount">10</entry>
+<entry key="Show.9">0</entry>
+<entry key="Show.8">0</entry>
+<entry key="Show.7">1</entry>
+<entry key="Show.6">0</entry>
+<entry key="TransformParam.9">1</entry>
+<entry key="Show.5">1</entry>
+<entry key="TransformParam.8">1</entry>
+<entry key="Show.4">0</entry>
+<entry key="TransformParam.7">1</entry>
+<entry key="Show.3">1</entry>
+<entry key="TransformParam.6">1</entry>
+<entry key="Show.2">0</entry>
+<entry key="TransformParam.5">1</entry>
+<entry key="Show.1">1</entry>
+<entry key="TransformParam.4">1</entry>
+<entry key="Show.0">0</entry>
+<entry key="TransformParam.3">1</entry>
+<entry key="TransformParam.2">1</entry>
+<entry key="TransformParam.1">1</entry>
+<entry key="TransformParam.0">1</entry>
+<entry key="TransformMode.9">Transform_None</entry>
+<entry key="TransformMode.8">Transform_None</entry>
+<entry key="TransformMode.7">Transform_None</entry>
+<entry key="TransformMode.6">Transform_None</entry>
+<entry key="TransformMode.5">Transform_None</entry>
+<entry key="TransformMode.4">Transform_None</entry>
+<entry key="TransformMode.3">Transform_None</entry>
+<entry key="TransformMode.2">Transform_None</entry>
+<entry key="TransformMode.1">Transform_None</entry>
+<entry key="TransformMode.0">Transform_None</entry>
+</properties>

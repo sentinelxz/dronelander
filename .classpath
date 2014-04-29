@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="eu/hrasko/dronelander/dronelanderDLL.java|eu/hrasko/dronelander/dronelanderTCP.java|eu/hrasko/dronelander/dronelanderTCPServer.java|eu/hrasko/dronelander/TCP.java|eu/hrasko/dronelander/dronelanderEXE.java|eu/hrasko/dronelander/ExeCom.java|eu/hrasko/dronelander/MyObjectFinder.java|eu/hrasko/dronelander/VideoRecogniser1.java|com/codeminders/ardrone/ARDrone2.java|com/codeminders/controltower/ControlTower2.java|com/codeminders/ardrone/NavData2.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/javadrone/lib/jul-to-slf4j-1.7.2.jar"/>
+	<classpathentry kind="lib" path="/javadrone/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="/javadrone/lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="/javadrone/lib/trident.jar"/>
+	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
+	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+	<classpathentry kind="lib" path="lib/SoftNetConsultUtils.2.01.slim.jar"/>
+	<classpathentry kind="lib" path="lib/snakeyaml-1.11.jar" sourcepath="lib/snakeyaml-1.11-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/dronelander/lib/snakeyaml-1.11-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/dronelander/lib/commons-lang3-3.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="/javadrone/lib/maven/com/twilight/h264-decoder/1.1/hidapi-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/opencv-245.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="dronelander"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/LiveGraph.2.0.beta01.Complete.jar"/>
+	<classpathentry kind="lib" path="lib/SteelSeries-3.9.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/javadrone"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
