@@ -1,7 +1,7 @@
 %YAML:1.0
-thresholdStep: 20.
-minThreshold: 30.
-maxThreshold: 500.
+thresholdStep: 10.
+minThreshold: 60.
+maxThreshold: 300.
 minRepeatability: 1
 minDistBetweenBlobs: 100.
 filterByColor: 1

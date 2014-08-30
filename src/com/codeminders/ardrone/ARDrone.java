@@ -1,14 +1,20 @@
 package com.codeminders.ardrone;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +47,7 @@ import com.codeminders.ardrone.version.ftp.DroneFTPversionReader;
 
 import eu.hrasko.dronelander.DroneController;
 import eu.hrasko.dronelander.Tachometer;
+import eu.hrasko.p5video.VideoManager2;
 
 public class ARDrone {
 	public enum State {
@@ -112,16 +119,16 @@ public class ARDrone {
 	private State state = State.DISCONNECTED;
 	private Object state_mutex = new Object();
 
-	private static final int NAVDATA_PORT = 5554;
-	private static final int VIDEO_PORT = 5555;
-	private static final int CONTROL_PORT = 5559;
+	public static final int NAVDATA_PORT = 5554;
+	public static final int VIDEO_PORT = 5555;
+	public static final int CONTROL_PORT = 5559;
 
 	private static final int NAVDATA_BUFFER_SIZE = 4096;
 	private static final int VIDEO_BUFFER_SIZE = 100 * 1024;
 
 	final static byte[] DEFAULT_DRONE_IP = { (byte) 192, (byte) 168, (byte) 1, (byte) 1 };
 
-	private static final int DEFAULT_DRONE_VERSION = 1;
+	private static final int DEFAULT_DRONE_VERSION = 2;
 
 	private InetAddress drone_addr;
 	private DatagramSocket cmd_socket;
@@ -156,7 +163,12 @@ public class ARDrone {
 		this(InetAddress.getByAddress(DEFAULT_DRONE_IP), 1000, 1000);
 	}
 
+	public static ARDrone drone;
+
 	public ARDrone(InetAddress drone_addr, int navDataReconnectTimeout, int videoReconnectTimeout) {
+
+		drone = this;
+
 		this.drone_addr = drone_addr;
 		this.navDataReconnectTimeout = navDataReconnectTimeout;
 		this.videoReconnectTimeout = videoReconnectTimeout;
@@ -218,13 +230,22 @@ public class ARDrone {
 		}
 	}
 
+	private int bootstrapCount = 0;
+
 	private void changeState(State newstate) throws IOException {
 		if (newstate == State.ERROR)
 			changeToErrorState(null);
 
+		if (newstate == State.BOOTSTRAP) {
+			bootstrapCount++;
+			if (bootstrapCount > 1) {
+				return;
+			}
+		}
+
 		synchronized (state_mutex) {
 			if (state != newstate) {
-				log.fine("State changed from " + state + " to " + newstate);
+				log.severe("State changed from " + state + " to " + newstate);
 				state = newstate;
 
 				// We automatically switch to DEMO from bootstrap
@@ -278,10 +299,10 @@ public class ARDrone {
 			int version = DEFAULT_DRONE_VERSION;
 			try {
 				String versionStr = versionReader.readDroneVersion();
-				log.log(Level.FINER, "Drone version string: " + versionStr);
+				log.log(Level.INFO, "Drone version string: " + versionStr);
 				version = Integer.parseInt(versionStr.substring(0, versionStr.indexOf('.')));
 			} catch (NumberFormatException e) {
-				log.log(Level.SEVERE, "Failed to discover drone version. Using configuration for drone version: " + version, e);
+				log.log(Level.INFO, "Failed to discover drone version. Using configuration for drone version: " + version, e);
 			}
 
 			cmd_socket = new DatagramSocket();
@@ -292,7 +313,7 @@ public class ARDrone {
 			cmd_sending_thread.start();
 
 			enableVideo();
-			enableAutomaticVideoBitrate();
+			// enableAutomaticVideoBitrate();
 
 			NavDataDecoder nav_data_decoder = (null == ext_nav_data_decoder) ? new ARDrone10NavDataDecoder(this, NAVDATA_BUFFER_SIZE) : ext_nav_data_decoder;
 
@@ -307,6 +328,14 @@ public class ARDrone {
 
 			if (null != video_data_reader && null != video_data_decoder) {
 				drone_video_channel_processor = new ChannelProcessor(video_data_reader, video_data_decoder);
+			} else {
+				boolean connected = ((VideoManager2) video_data_decoder).connect(VIDEO_PORT);
+				cmd_queue.add(new ConfigureCommand("video:video_codec", "0x81"));
+				new Thread(((VideoManager2) video_data_decoder)).start();
+				if (connected) {
+					System.out.println("VIDEO DRONE 2.0 connected");
+				} else
+					System.err.println("VIDEO DRONE 2.0 NOT connected");
 			}
 
 			changeState(State.CONNECTING);
@@ -322,11 +351,32 @@ public class ARDrone {
 		case 1:
 			return new ARDrone10VideoDataDecoder(this, VIDEO_BUFFER_SIZE);
 		case 2:
-			return null; // no decoder implemented yet
+			return new VideoManager2(this, getInetAddress("192.168.1.1"));
+
 		default:
 			return new ARDrone10VideoDataDecoder(this, VIDEO_BUFFER_SIZE);
 		}
 
+	}
+
+	private InetAddress getInetAddress(String ipaddr) {
+		InetAddress inetaddr = null;
+		StringTokenizer st = new StringTokenizer(ipaddr, ".");
+		byte[] ipBytes = new byte[4];
+		if (st.countTokens() == 4) {
+			for (int i = 0; i < 4; i++) {
+				ipBytes[i] = (byte) Integer.parseInt(st.nextToken());
+			}
+		} else {
+			System.out.println("Incorrect IP address");
+			return null;
+		}
+		try {
+			inetaddr = InetAddress.getByAddress(ipBytes);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return inetaddr;
 	}
 
 	private ARDroneDataReader getVideoReader(int version) throws IOException {
@@ -334,7 +384,8 @@ public class ARDrone {
 		case 1:
 			return new LigthUDPDataReader(drone_addr, VIDEO_PORT, videoReconnectTimeout);
 		case 2:
-			return new TCPDataRader(drone_addr, VIDEO_PORT, videoReconnectTimeout);
+			return null;// new TCPDataRader(drone_addr, VIDEO_PORT,
+						// videoReconnectTimeout);
 		default:
 			return new LigthUDPDataReader(drone_addr, VIDEO_PORT, videoReconnectTimeout);
 		}
@@ -455,6 +506,20 @@ public class ARDrone {
 
 		synchronized (emergency_mutex) {
 			emergencyMode = nd.isEmergency();
+		}
+
+		// System.out.println("Mode: " + nd.getMode());
+
+		// BATTERY FOR MICHELLE
+		try {
+			java.nio.file.Files.write((new File("battery.txt")).toPath(), new Integer(nd.getBattery()).toString().getBytes("utf-8"), StandardOpenOption.CREATE,
+					StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 		try {
@@ -590,6 +655,8 @@ public class ARDrone {
 		if (!isEmergencyMode()) {
 			cmd_queue.add(new TakeOffCommand());
 			changeState(State.TAKING_OFF);
+		} else {
+			System.err.println("Cannot take off because in emergency mode!");
 		}
 	}
 
@@ -598,10 +665,18 @@ public class ARDrone {
 	}
 
 	// Callback used by VideoReciver
-	protected void videoFrameReceived(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize) {
+	public void videoFrameReceived(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize) {
 		synchronized (image_listeners) {
 			for (DroneVideoListener l : image_listeners)
-				l.frameReceived(startX, startY, w, h, rgbArray, offset, scansize);
+				l.frameRecieved(startX, startY, w, h, rgbArray, offset, scansize);
+		}
+	}
+
+	public void videoFrameReceived(BufferedImage im) {
+		synchronized (image_listeners) {
+			for (DroneVideoListener l : image_listeners)
+				l.frameRecieved(im);
+
 		}
 	}
 

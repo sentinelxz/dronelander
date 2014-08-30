@@ -54,14 +54,6 @@ public class VideoPanel extends javax.swing.JPanel implements DroneVideoListener
 	}
 
 	@Override
-	public void frameReceived(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize) {
-		BufferedImage im = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
-		im.setRGB(startX, startY, w, h, rgbArray, offset, scansize);
-		image.set(im);
-		repaint();
-	}
-
-	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -112,4 +104,18 @@ public class VideoPanel extends javax.swing.JPanel implements DroneVideoListener
 	}// </editor-fold>//GEN-END:initComponents
 		// Variables declaration - do not modify//GEN-BEGIN:variables
 		// End of variables declaration//GEN-END:variables
+
+	@Override
+	public void frameRecieved(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize) {
+		BufferedImage im = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
+		im.setRGB(startX, startY, w, h, rgbArray, offset, scansize);
+		frameRecieved(im);
+
+	}
+
+	@Override
+	public void frameRecieved(BufferedImage im) {
+		image.set(im);
+		repaint();
+	}
 }

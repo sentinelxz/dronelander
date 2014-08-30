@@ -108,8 +108,8 @@ public class DroneController implements DroneStatusChangeListener {
 		this.droneLander = droneLander;
 		xController = new PIDAxisController('X', drone);
 		yController = new PIDAxisController('Y', drone);
-		xController.setPID(0.35f, 0f, 5f);
-		yController.setPID(0.35f, 0f, 5f);
+		xController.setPID(0.35f, 0f, 4f);
+		yController.setPID(0.35f, 0f, 4f);
 		yawController = new PIDAxisController('w', drone);
 		yawController.setPID(0.005f, 0f, 0f);
 		altController = new PIDAxisController('a', drone);

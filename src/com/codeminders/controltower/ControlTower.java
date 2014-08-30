@@ -164,16 +164,17 @@ public class ControlTower extends javax.swing.JFrame implements DroneStatusChang
 
 				@Override
 				public void ready() {
-					try {
-						Logger.getLogger(getClass().getName()).debug("updateLoop::ready()");
-						// System.err.println("Configure");
-						droneConfigWindow.updateDrone();
-						// drone.selectVideoChannel(VideoChannel.HORIZONTAL_ONLY);
-						drone.setCombinedYawMode(true);
-						drone.trim();
-					} catch (IOException e) {
-						drone.changeToErrorState(e);
-					}
+					// try {
+					Logger.getLogger(getClass().getName()).debug("updateLoop::ready()");
+					System.err.println("Configure");
+					droneConfigWindow.updateDrone();
+					// drone.selectVideoChannel(VideoChannel.HORIZONTAL_ONLY);
+					// drone.setCombinedYawMode(true);
+					// drone.trim();
+					// } catch (IOException e) {
+					// System.err.println("WTF");
+					// drone.changeToErrorState(e);
+					// }
 				}
 			});
 

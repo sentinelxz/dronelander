@@ -199,7 +199,7 @@ public class NavData {
 
 	private static void parseDemoNavData(NavData2 data, ByteBuffer buf, int offset) throws NavDataFormatException {
 		data.ctrl_state = CtrlState.fromInt(buf.getInt(offset) >> 16);
-		log.debug("Ctrl State " + data.ctrl_state);
+		//log.debug("Ctrl State " + data.ctrl_state);
 
 		offset += 4;
 		data.battery = buf.getInt(offset);

@@ -28,6 +28,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/LiveGraph.2.0.beta01.Complete.jar"/>
 	<classpathentry kind="lib" path="lib/SteelSeries-3.9.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/javadrone"/>
+	<classpathentry kind="lib" path="lib/xuggle-xuggler-5.4.jar"/>
+	<classpathentry kind="lib" path="lib/modified_controltower.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
